@@ -33,9 +33,11 @@ final class Decimal extends Text
         return $this->locale;
     }
 
-    public function precision(int $value): void
+    public function precision(int $value): static
     {
         $this->precision = $value;
+
+        return $this;
     }
 
     protected function getPrecision(): int
@@ -88,7 +90,7 @@ final class Decimal extends Text
             ? $this->formatter->parse($this->toValue())
             : $this->toValue();
 
-        $value = $this->formatter->format($value);
+        $value = $this->formatter->format($value ?? 0);
 
         return (string) $value;
     }
