@@ -1,0 +1,39 @@
+{
+    "name": "forest-lynx/moonshine-decimal-field",
+    "description": "",
+    "keywords": ["moonshine", "decimal field"],
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/forest-lynx/moonshine-decimal-field/issues",
+        "source": "https://github.com/forest-lynx/moonshine-decimal-field"
+    },
+    "authors": [
+        {
+            "name": "Дмитрий М",
+            "email": "trot505@yandex.ru",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-intl": "*",
+        "moonshine/moonshine": "^2.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "ForestLynx\\MoonShine\\": "src/"
+        }
+    },
+    "conflict": {
+        "moonshine/moonshine": "<2.0"
+    },
+    "scripts": {
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+            ]
+        }
+    }
+}
