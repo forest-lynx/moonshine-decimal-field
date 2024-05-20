@@ -15,9 +15,13 @@ final class Decimal extends Text
     protected int $precision = 2;
     protected int $styleFormatter = NumberFormatter::DECIMAL;
 
-    protected function afterMake(): void
-    {
-        $this->locale = app()->getLocale();
+    public function __construct(
+        Closure|string|null $label = null,
+        ?string $column = null,
+        ?Closure $formatted = null
+    ) {
+        parent::__construct($label, $column, $formatted);
+
         $this->setFormatter();
     }
 
@@ -30,7 +34,7 @@ final class Decimal extends Text
 
     protected function getLocale(): string
     {
-        return $this->locale;
+        return $this->locale ?? app()->getLocale();
     }
 
     public function precision(int $value): static
