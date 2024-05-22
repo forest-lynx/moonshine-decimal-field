@@ -18,19 +18,45 @@ composer require forest-lynx/moonshine-decimal-field
 ## Использование
 ```php
 <?php
-...
+//...
 use ForestLynx\MoonshineDecimal\Fields\Decimal;
-...
+//...
 Decimal::make('Decimal', 'decimal');
 ```
-Доступные методы:
+> [!NOTE] 
+> При формировании поля используется NumberFormatter php-intl.
 
-`locale()` - принимает строку с локалью, например: 'ru_RU', по умолчанию значение берется из настроек проекта.
+### Доступные методы:
 
-`precision()` - принимает число, количество знаков дробной части, по умолчанию 2.
+`locale(string $locale)`:
+- `$locale` - принимает строку с локалью, например: 'ru_RU' или 'ru', по умолчанию значение берется из настроек проекта.
 
-> При формировании поля используется NumberFormatter php-intl. 
-При отображении к полю применятся маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
+`precision(int $precision, ?bool $isNaturalNumber)`:
+ - `$precision` принимает число, количество знаков дробной части, по умолчанию 2.
+ - `$isNaturalNumber` Не обязательный параметр, по умолчанию `false`. Отвечает за обработку натуральных чисел, например если у вас в базе данных значения хранятся в виде целых чисел.
+
+`naturalNumber(?int $precision = 2)`
+- `$precision` принимает число, количество знаков дробной части, по умолчанию 2.
+
+Пример с натуральным числом, значение поля в базе данных = 12564. С учетом Ваших потребностей оно должно преобразоваться в 125.64:
+```php
+<?php
+use ForestLynx\MoonshineDecimal\Fields\Decimal;
+//...
+Decimal::make('Sum', 'sum')
+   ->precision(isNaturalNumber: true);
+//or
+Decimal::make('Sum', 'sum')
+   ->naturalNumber();
+//...
+```
+> [!NOTE]
+> При работе с натуральными числами, со значением поля полученным из request перед сохранением происходит обратная трансформация.
+
+>[!CAUTION]
+> Значения `$precision` в методах `precision()`,`naturalNumber()` перезаписывает данные о количестве знаков дробной части.
+
+При редактировании к полю применятся маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
 ## Лицензия
 [Лицензия MIT](LICENSE).
