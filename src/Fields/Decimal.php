@@ -63,7 +63,6 @@ final class Decimal extends Text
         if (
             !is_null($precision)
             && $this->getPrecision() !== $precision
-            && $this->getPrecision() !== 2
         ) {
             $this->precision($precision);
         }
