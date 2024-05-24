@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace ForestLynx\MoonShine\Fields;
 
 use Closure;
+use ForestLynx\MoonShine\Trait\WithNumberFormatter;
 use NumberFormatter;
 use MoonShine\Fields\Text;
 
 final class Decimal extends Text
 {
+    use WithNumberFormatter;
+
     protected string $locale;
     protected NumberFormatter $formatter;
     protected int $precision = 2;
     protected int $styleFormatter = NumberFormatter::DECIMAL;
+    protected bool $isNaturalNumber = false;
 
     public function __construct(
         Closure|string|null $label = null,
@@ -37,9 +41,13 @@ final class Decimal extends Text
         return $this->locale ?? app()->getLocale();
     }
 
-    public function precision(int $value): static
+    public function precision(int $precision, ?bool $isNaturalNumber = false): static
     {
-        $this->precision = $value;
+        $this->precision = $precision;
+
+        if (!$this->isNaturalNumber() && $isNaturalNumber) {
+            $this->isNaturalNumber = $isNaturalNumber;
+        }
 
         return $this;
     }
@@ -49,19 +57,25 @@ final class Decimal extends Text
         return $this->precision;
     }
 
-    protected function setFormatter(): void
+    public function naturalNumber(?int $precision = null): self
     {
-        $this->formatter = new NumberFormatter($this->getLocale(), $this->styleFormatter);
+
+        if (
+            !is_null($precision)
+            && $this->getPrecision() !== $precision
+            && $this->getPrecision() !== 2
+        ) {
+            $this->precision($precision);
+        }
+
+        $this->isNaturalNumber = true;
+
+        return $this;
     }
 
-    protected function getThousandsSeparator(): string
+    protected function isNaturalNumber(): bool
     {
-        return $this->formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
-    }
-
-    protected function getDecimalSeparator(): string
-    {
-        return $this->formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+        return $this->isNaturalNumber;
     }
 
     protected function resolvePreview(): string
@@ -84,15 +98,21 @@ final class Decimal extends Text
         return $value;
     }
 
-    public function getDecimalValue(): string
+    protected function getDecimalValue(): string
     {
         if (!isset($this->formatter)) {
             $this->setFormatter();
         }
 
+        $this->checkAndSetFractionDigits();
+
         $value = is_string($this->toValue())
             ? $this->formatter->parse($this->toValue())
             : $this->toValue();
+
+        if ($this->isNaturalNumber()) {
+            $value = $value / pow(10, $this->getPrecision());
+        }
 
         $value = $this->formatter->format($value ?? 0);
 
@@ -105,8 +125,16 @@ final class Decimal extends Text
             $this->setFormatter();
         }
 
+        $this->checkAndSetFractionDigits();
+
         return function ($item) {
-            $item->{$this->column()} = $this->formatter->parse((string) $this->requestValue());
+            $value = $this->formatter->parse((string) $this->requestValue());
+
+            if ($this->isNaturalNumber()) {
+                $value = (int) ($value * pow(10, $this->getPrecision()));
+            }
+
+            $item->{$this->column()} = $value;
 
             return $item;
         };
