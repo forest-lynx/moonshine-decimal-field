@@ -33,6 +33,7 @@
     "extra": {
         "laravel": {
             "providers": [
+                "ForestLynx\\MoonShine\\Providers\\DecimalFieldServiceProvider"
             ]
         }
     }

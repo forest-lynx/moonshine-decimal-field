@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace ForestLynx\MoonShine\Fields;
 
 use Closure;
-use ForestLynx\MoonShine\Trait\WithNumberFormatter;
 use NumberFormatter;
 use MoonShine\Fields\Text;
+use ForestLynx\MoonShine\Trait\WithUnit;
+use ForestLynx\MoonShine\Trait\WithNumberFormatter;
+use MoonShine\Contracts\Fields\DefaultValueTypes\DefaultCanBeArray;
 
-final class Decimal extends Text
+final class Decimal extends Text implements DefaultCanBeArray
 {
     use WithNumberFormatter;
+    use WithUnit;
 
+    protected string $view = 'moonshine-fl::fields.decimal';
     protected string $locale;
     protected NumberFormatter $formatter;
     protected int $precision = 2;
@@ -39,6 +43,11 @@ final class Decimal extends Text
     protected function getLocale(): string
     {
         return $this->locale ?? app()->getLocale();
+    }
+
+    public function resolveFill(array $raw = [], mixed $casted = null, int $index = 0): static
+    {
+        return parent::resolveFill($raw, $casted, $index);
     }
 
     public function precision(int $precision, ?bool $isNaturalNumber = false): static
@@ -79,10 +88,14 @@ final class Decimal extends Text
 
     protected function resolvePreview(): string
     {
+        $resolvePreviewValue = '';
         if ($this->toFormattedValue() === $this->toValue()) {
-            return $this->getDecimalValue();
+            $resolvePreviewValue = $this->getDecimalValue();
+        } else {
+            $resolvePreviewValue = $this->toFormattedValue();
         }
-        return $this->toFormattedValue();
+
+        return $resolvePreviewValue . ($this->isGroup() ? ' ' . $this->getUnitPreviewValue() : '');
     }
 
     protected function resolveValue(): string
@@ -127,13 +140,19 @@ final class Decimal extends Text
         $this->checkAndSetFractionDigits();
 
         return function ($item) {
-            $value = $this->formatter->parse((string) $this->requestValue());
+            $values = $this->requestValue();
+            $number = $this->formatter->parse((string) $values[$this->column()]);
 
-            if ($this->isNaturalNumber()) {
-                $value = (int) ($value * pow(10, $this->getPrecision()));
+            if ($this->isGroup()) {
+                $unit = $values[$this->getUnitColumn()];
+                $item->{$this->getUnitColumn()} = $unit;
             }
 
-            $item->{$this->column()} = $value;
+            if ($this->isNaturalNumber()) {
+                $number = (int) ($number * pow(10, $this->getPrecision()));
+            }
+
+            $item->{$this->column()} = $number;
 
             return $item;
         };
