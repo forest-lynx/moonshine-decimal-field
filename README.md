@@ -4,10 +4,12 @@
 [![Laravel][ico-laravel]](Laravel) [![PHP][ico-php]](PHP) 
 
 Поле для работы с десятичными числами в административной панели [MoonShine](https://moonshine-laravel.com/). Наследуется от поля Text.
+При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
 ## Содержание
 * [Установка](#установка)
 * [Использование](#использование)
+    * [Единицы измерения](#единицы-измерения)
 * [Лицензия](#лицензия)
 
 ## Установка
@@ -27,14 +29,13 @@ Decimal::make('Price', 'price');
 > При формировании поля используется NumberFormatter php-intl.
 > По умолчанию данные о локали берутся из настроек проекта, для ее переопределения используйте метод `locale()`
 
-#### Методы:
+##### Методы
 `locale(string $locale)`:
 - `$locale` - принимает строку с локалью, например: 'ru_RU' или 'ru'.
 
 `precision(int $precision, ?bool $isNaturalNumber)`:
  - `$precision` принимает число, количество знаков дробной части.
  - `$isNaturalNumber` Не обязательный параметр, по умолчанию `false`. Отвечает за обработку натуральных чисел, например если у вас в базе данных значения хранятся в виде целых чисел.
-
 `naturalNumber(?int $precision = 2)`
 - `$precision` принимает число, количество знаков дробной части, по умолчанию 2.
 
@@ -67,7 +68,39 @@ Decimal::make('Sum', 'sum')
 > [!NOTE]
 > При работе с натуральными числами, со значением поля полученным из request перед сохранением происходит обратная трансформация.
 
-При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
+#### Единицы измерения
+Для указания поля, где хранятся единицы измерения:
+
+##### Методы
+`unit(string $unit, string|array $data)`:
+- `$unit` - название колонки в базе данных.
+- `$data` - массив с данными, или название класса перечисления с данными о единицах измерения.
+
+`unitDefault(mixed $default)`:
+- `$default` - значение по умолчанию для поля.
+
+Примеры использования:
+```php
+<?php
+use ForestLynx\MoonshineDecimal\Fields\Decimal;
+//...
+Decimal::make('Price', 'price')
+    ->unit('unit', ['килограмм.', 'литр'])
+    ->unitDefault(0);
+//or
+Decimal::make('Price', 'price')
+    ->unit('unit', [0 => 'килограмм.', 1 => 'литр'])
+    ->unitDefault(1);
+//or
+Decimal::make('Price', 'price')
+    ->unit('unit', UnitEnum::class)
+    ->unitDefault(UnitEnum::KILOGRAM);
+//...
+```
+Как это выглядит в административной панели:
+|Просмотр|Редактирование|
+|:--:|:--:|
+|![preview](./screenshots/priview.png)|![edit](./screenshots/edit.png)|
 
 ## Лицензия
 [Лицензия MIT](LICENSE).
