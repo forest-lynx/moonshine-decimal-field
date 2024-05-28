@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ForestLynx\MoonShine\Trait;
 
+use Illuminate\Database\Eloquent\Model;
 use MoonShine\Support\SelectOptions;
 use ReflectionClass;
 use UnitEnum;
@@ -59,10 +60,16 @@ trait WithUnit
     public function isSelected(string $value): bool
     {
         $item = $this?->getData();
+        $item = is_array($item)
+            ? array_filter($item, fn($i)=>!is_null($i))
+            : $item;
 
         $current = [];
 
-        if (is_null($item?->getKey()) && $this->unitDefault) {
+        if (
+            (!($item instanceof Model && $item->getKey()) || empty($item))
+            && $this->unitDefault
+        ) {
             $current = $this->unitDefault;
         } else {
             $current = data_get($item, $this->getUnitColumn());
