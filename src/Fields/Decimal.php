@@ -90,7 +90,7 @@ final class Decimal extends Text implements DefaultCanBeArray
     {
         $resolvePreviewValue = '';
         if ($this->toFormattedValue() === $this->toValue()) {
-            $resolvePreviewValue = $this->getDecimalValue();
+            $resolvePreviewValue = $this->getDecimalValue() ?? '0';
         } else {
             $resolvePreviewValue = $this->toFormattedValue();
         }
@@ -100,7 +100,7 @@ final class Decimal extends Text implements DefaultCanBeArray
 
     protected function resolveValue(): string
     {
-        $value = $this->getDecimalValue();
+        $value = $this->getDecimalValue() ?? '';
 
         $this->setAttribute(
             'x-mask:dynamic',
@@ -110,7 +110,7 @@ final class Decimal extends Text implements DefaultCanBeArray
         return $value;
     }
 
-    protected function getDecimalValue(): string
+    protected function getDecimalValue(): ?string
     {
         if (!isset($this->formatter)) {
             $this->setFormatter();
@@ -126,9 +126,11 @@ final class Decimal extends Text implements DefaultCanBeArray
             $value = $value / pow(10, $this->getPrecision());
         }
 
-        $value = $this->formatter->format($value ?? 0);
-
-        return (string) $value;
+        if ($value) {
+            $value = $this->formatter->format($value);
+            return (string) $value;
+        }
+        return null;
     }
 
     protected function resolveOnApply(): ?Closure
