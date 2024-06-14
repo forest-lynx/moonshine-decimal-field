@@ -68,7 +68,6 @@ final class Decimal extends Text implements DefaultCanBeArray
 
     public function naturalNumber(?int $precision = null): self
     {
-
         if (
             !is_null($precision)
             && $this->getPrecision() !== $precision
@@ -112,15 +111,22 @@ final class Decimal extends Text implements DefaultCanBeArray
 
     protected function getDecimalValue(): ?string
     {
+        //TODO обработка строкового значения не относящегося к установленной локали
+        // и не являющейся фактически числом или числом с плавающей точкой.
         if (!isset($this->formatter)) {
             $this->setFormatter();
         }
 
         $this->checkAndSetFractionDigits();
 
-        $value = is_string($this->toValue())
-            ? $this->formatter->parse($this->toValue())
-            : $this->toValue();
+        if (is_string($this->toValue())) {
+            $value = $this->formatter->parse($this->toValue());
+            if (!$value) {
+                $value = floatval($this->toValue());
+            }
+        } else {
+            $value = $this->toValue() ?? 0;
+        }
 
         if ($this->isNaturalNumber()) {
             $value = $value / pow(10, $this->getPrecision());
@@ -143,17 +149,22 @@ final class Decimal extends Text implements DefaultCanBeArray
 
         return function ($item) {
             $values = $this->requestValue();
-            $number = $this->formatter->parse((string) $values[$this->column()]);
+
+            if (!$values) {
+                return $item;
+            }
 
             if ($this->isGroup()) {
                 $unit = $values[$this->getUnitColumn()];
                 $item->{$this->getUnitColumn()} = $unit;
+                $number = $this->formatter->parse((string) ($values[$this->column()] ?? 0));
+            } else {
+                $number = $this->formatter->parse((string) $values);
             }
 
             if ($this->isNaturalNumber()) {
                 $number = (int) ($number * pow(10, $this->getPrecision()));
             }
-
             $item->{$this->column()} = $number;
 
             return $item;
