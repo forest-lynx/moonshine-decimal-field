@@ -21,7 +21,7 @@ composer require forest-lynx/moonshine-decimal-field
 ```php
 <?php
 //...
-use ForestLynx\MoonshineDecimal\Fields\Decimal;
+use ForestLynx\MoonShine\Fields\Decimal;
 //...
 Decimal::make('Price', 'price');
 ```
@@ -42,7 +42,7 @@ Decimal::make('Price', 'price');
 Пример с натуральным числом, значение поля в базе данных = 12564. Предположим, что с учетом Ваших потребностей оно должно трансформироваться в 125.64:
 ```php
 <?php
-use ForestLynx\MoonshineDecimal\Fields\Decimal;
+use ForestLynx\MoonShine\Fields\Decimal;
 //...
 Decimal::make('Sum', 'sum')
    ->precision(2, true);
@@ -56,7 +56,7 @@ Decimal::make('Sum', 'sum')
 >Например:
 >```php
 ><?php
->use ForestLynx\MoonshineDecimal\Fields\Decimal;
+>use ForestLynx\MoonShine\Fields\Decimal;
 >//...
 >Decimal::make('Sum', 'sum')
 >   ->precision(3)
@@ -82,7 +82,7 @@ Decimal::make('Sum', 'sum')
 Примеры использования:
 ```php
 <?php
-use ForestLynx\MoonshineDecimal\Fields\Decimal;
+use ForestLynx\MoonShine\Fields\Decimal;
 //...
 Decimal::make('Price', 'price')
     ->unit('unit', ['килограмм.', 'литр'])
