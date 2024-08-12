@@ -102,9 +102,9 @@ Decimal::make('Price', 'price')
 //...
 ```
 How it looks like in the admin panel:
-||View|Edit|.
+|View|Edit|.
 |:--:|:--:|
-|![preview](../screenshots/priview.png)|![edit](../screenshots/edit.png)|!
+|![preview](../screenshots/priview.png)|![edit](../screenshots/edit.png)|
 
 ## License
 [MIT Licence](LICENSE).
