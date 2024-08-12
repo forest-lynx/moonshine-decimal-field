@@ -58,7 +58,7 @@ Decimal::make('Sum', 'sum')
 >[!CAUTION]
 > The `$precision` values in the `precision()`,`naturalNumber()` methods overwrites the data about the number of fractional part digits previously defined by the specified methods.
 >Example:
->```php.
+>```php
 ><?php
 >use ForestLynx\MoonShine\Fields\Decimal;
 >//...
@@ -84,7 +84,7 @@ To specify the field where the units of measurement are stored:
 - `$default` - the default value for the field.
 
 Usage examples:
-```php.
+```php
 <?php
 use ForestLynx\MoonShine\Fields\Decimal;
 //...
