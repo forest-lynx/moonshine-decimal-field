@@ -11,10 +11,10 @@ Decimal number field in the [MoonShine](https://moonshine-laravel.com/) admin pa
 When editing, a mask is applied to the field [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
 ## Contents
-* [Setting](#setting)
-## [Usage](#usage)
-    # [Units of Measurement](#Units of Measurement)
-## [Licence](#licence)
+* [Installation](#installation)
+* [Usage](#usage)
+    * [Units of Measurement](#units-of-measurement)
+* [License](#license)
 
 ## Installation
 Command to install:
@@ -72,7 +72,7 @@ Decimal::make('Sum', 'sum')
 > [!NOTE]
 > > When working with natural numbers, the reverse transformation is performed with the field value obtained from request before saving.
 
-#### Units
+#### Units of measurement
 To specify the field where the units of measurement are stored:
 
 ##### Methods
@@ -106,7 +106,5 @@ How it looks like in the admin panel:
 |:--:|:--:|
 |![preview](../screenshots/priview.png)|![edit](../screenshots/edit.png)|!
 
-## Licence
+## License
 [MIT Licence](LICENSE).
-
-Translated with DeepL.com (free version)
