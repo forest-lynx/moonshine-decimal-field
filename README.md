@@ -1,7 +1,13 @@
 # Поле Decimal для Moonshine
-[![Software License][ico-license]](LICENSE)
 
-[![Laravel][ico-laravel]](Laravel) [![PHP][ico-php]](PHP) 
+[![Latest Stable Version](https://img.shields.io/packagist/v/forest-lynx/moonshine-decimal-field)](https://github.com/forest-lynx/moonshine-decimal-field)
+[![Total Downloads](https://img.shields.io/packagist/dt/forest-lynx/moonshine-decimal-field)](https://github.com/forest-lynx/moonshine-decimal-field) 
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)\
+[![Laravel](https://img.shields.io/badge/Laravel-11+-FF2D20?style=for-the-badge&logo=laravel)](Laravel) 
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)](PHP) 
+[![PHP](https://img.shields.io/badge/Moonshine-2.0+-1B253B?style=for-the-badge)](https://github.com/moonshine-software/moonshine) 
+
+Documentation in [English](./doc/README-EN.md)
 
 Поле для работы с десятичными числами в административной панели [MoonShine](https://moonshine-laravel.com/). Наследуется от поля Text.
 При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
@@ -104,8 +110,3 @@ Decimal::make('Price', 'price')
 
 ## Лицензия
 [Лицензия MIT](LICENSE).
-
-
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg
-[ico-laravel]: https://img.shields.io/badge/Laravel-10+-FF2D20?style=for-the-badge&logo=laravel
-[ico-php]: https://img.shields.io/badge/PHP-8.1+-777BB4?style=for-the-badge&logo=php
