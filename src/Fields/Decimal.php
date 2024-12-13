@@ -6,12 +6,14 @@ namespace ForestLynx\MoonShine\Fields;
 
 use Closure;
 use NumberFormatter;
-use MoonShine\Fields\Text;
 use ForestLynx\MoonShine\Trait\WithUnit;
 use ForestLynx\MoonShine\Trait\WithNumberFormatter;
-use MoonShine\Contracts\Fields\DefaultValueTypes\DefaultCanBeArray;
+use Illuminate\Contracts\Support\Renderable;
+use MoonShine\AssetManager\Css;
+use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
+use MoonShine\UI\Fields\Text;
 
-final class Decimal extends Text implements DefaultCanBeArray
+final class Decimal extends Text
 {
     use WithNumberFormatter;
     use WithUnit;
@@ -45,11 +47,11 @@ final class Decimal extends Text implements DefaultCanBeArray
         return $this->locale ?? app()->getLocale();
     }
 
-    public function resolveFill(array $raw = [], mixed $casted = null, int $index = 0): static
+    /*protected function resolveFill(array $raw = [], DataWrapperContract $casted = null, int $index = 0): static
     {
         return parent::resolveFill($raw, $casted, $index);
     }
-
+*/
     public function precision(int $precision, ?bool $isNaturalNumber = false): static
     {
         $this->precision = $precision;
@@ -94,8 +96,17 @@ final class Decimal extends Text implements DefaultCanBeArray
             $resolvePreviewValue = $this->toFormattedValue();
         }
 
-        return $resolvePreviewValue . ($this->isGroup() ? ' ' . $this->getUnitPreviewValue() : '');
+        return $resolvePreviewValue . ($this->getUnitField() ? ' ' . $this->getUnitField()->preview() : '');
     }
+
+    /*protected function resolveRender(): Renderable|Closure|string
+    {
+        if($this->isUpdateOnPreview()){
+            $this->unitField?->previewMode()->updateOnPreview();
+        }
+
+        return parent::resolveRender();
+    }*/
 
     protected function resolveValue(): string
     {
@@ -148,26 +159,39 @@ final class Decimal extends Text implements DefaultCanBeArray
         $this->checkAndSetFractionDigits();
 
         return function ($item) {
-            $values = $this->requestValue();
-
-            if (!$values) {
+            $value = $this->getRequestValue();
+            $unitField = $this->getUnitField();
+            if($unitField){
+                $item->{$unitField->getColumn()} = $unitField->getRequestValue();
+            }
+            if (!$value) {
                 return $item;
             }
 
-            if ($this->isGroup()) {
-                $unit = $values[$this->getUnitColumn()];
-                $item->{$this->getUnitColumn()} = $unit;
-                $number = $this->formatter->parse((string) ($values[$this->column()] ?? 0));
-            } else {
-                $number = $this->formatter->parse((string) $values);
-            }
+            $number = $this->formatter->parse((string) $value);
 
             if ($this->isNaturalNumber()) {
                 $number = (int) ($number * pow(10, $this->getPrecision()));
             }
-            $item->{$this->column()} = $number;
+
+            $item->{$this->getColumn()} = $number;
 
             return $item;
         };
+    }
+
+    protected function viewData(): array
+    {
+        return [
+            ...parent::viewData(),
+            'unitField' => $this->getUnitField(),
+        ];
+    }
+
+    public function getAssets(): array
+    {
+        return [
+            Css::make('vendor/moonshine-decimal-field/css/decimal-field.css')
+        ];
     }
 }

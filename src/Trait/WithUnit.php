@@ -4,100 +4,63 @@ declare(strict_types=1);
 
 namespace ForestLynx\MoonShine\Trait;
 
-use Illuminate\Database\Eloquent\Model;
-use MoonShine\Support\SelectOptions;
+use Closure;
 use ReflectionClass;
-use UnitEnum;
+use MoonShine\UI\Fields\Enum;
+use MoonShine\UI\Fields\Select;
+use MoonShine\Support\DTOs\Select\Options;
 
 trait WithUnit
 {
-    protected ?string $unitColumn = null;
-    protected array $unitOptions = [];
-    protected mixed $unitDefault = null;
+    protected null|Select|Enum $unitField = null;
 
-    public function getUnitColumn(): ?string
+    public function unit(?string $column, Closure|array|Options|string $data, ?Closure $formatted = null): static
     {
-        return $this->unitColumn;
-    }
-
-    public function values(): array
-    {
-        return $this->unitOptions;
-    }
-
-    public function unit(string $column, string|array $data): static
-    {
-        $this->isGroup = true;
-        $this->unitColumn = $column;
-
-        if (is_string($data) && str($data)->isJson()) {
-            $values = json_decode(
-                $data,
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
-            $this->unitOptions = SelectOptions::flatten($values);
-        } elseif (is_array($data)) {
-            $this->unitOptions = SelectOptions::flatten($data);
-        } elseif (class_exists($data) && (new ReflectionClass($data))->isEnum()) {
-            $enums = collect($data::cases());
-            $this->unitOptions = $enums->mapWithKeys(fn ($enum): array => [
-                $enum->value => method_exists($enum, 'toString')
-                    ? $enum->toString()
-                    : $enum->value,
-                ])->toArray();
-        }
-        return $this;
-    }
-
-    public function unitDefault(mixed $default): static
-    {
-        $this->unitDefault = $default;
-        return $this;
-    }
-
-    public function isSelected(string $value): bool
-    {
-        $item = $this?->getData();
-        $item = is_array($item)
-            ? array_filter($item, fn($i)=>!is_null($i))
-            : $item;
-
-        $current = [];
-
         if (
-            (!($item instanceof Model && $item->getKey()) || empty($item))
-            && $this->unitDefault
+            is_string($data)
+            && class_exists($data)
+            && (new ReflectionClass($data))->isEnum()
         ) {
-            $current = $this->unitDefault;
-        } else {
-            $current = data_get($item, $this->getUnitColumn());
+            $this->unitField = Enum::make(column: $column, formatted: $formatted)->attach($data);
+        } elseif (!is_string($data)) {
+            $this->unitField = Select::make(column: $column, formatted: $formatted)
+                ->withoutWrapper()->options($data);
         }
 
-        return SelectOptions::isSelected($current, $value);
+        $this->unitField?->formName($this->getFormName());
+        return $this;
     }
 
-    protected function getUnitPreviewValue(): string
+    public function unitDefaultValue(mixed $default): static
     {
-        $value = data_get($this?->getData() ?? [], $this->getUnitColumn());
+        $this->unitField?->default($default);
 
-        if (is_null($value)) {
-            return '';
+        return $this;
+    }
+
+    public function unitNullable(): static
+    {
+        $this->unitField?->nullable();
+
+        return $this;
+    }
+
+    public function unitSearchable(): static
+    {
+        $this->unitField?->searchable();
+
+        return $this;
+    }
+
+    public function getUnitField(): null|Select|Enum
+    {
+        $unitField = (clone $this->unitField)?->fillData($this->getData());
+
+        if ($this->isUpdateOnPreview()) {
+            $unitField?->updateOnPreview();
+        } else {
         }
 
-        if ($value instanceof UnitEnum) {
-            return method_exists($value, 'toString')
-                    ? $value->toString()
-                    : $value?->value ?? $value->name;
-        }
-
-        if (is_scalar($value)) {
-            return data_get(
-                $this->values(),
-                $value,
-                (string) $value
-            );
-        }
+        return $unitField;
     }
 }
