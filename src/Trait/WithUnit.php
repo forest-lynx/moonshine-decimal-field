@@ -28,6 +28,7 @@ trait WithUnit
         }
 
         $this->unitField?->formName($this->getFormName());
+
         return $this;
     }
 
@@ -52,15 +53,13 @@ trait WithUnit
         return $this;
     }
 
-    public function getUnitField(): null|Select|Enum
+    protected function getUnitField(): null|Select|Enum
     {
-        $unitField = (clone $this->unitField)?->fillData($this->getData());
+        return (clone $this->unitField)?->fillData($this->getData());
+    }
 
-        if ($this->isUpdateOnPreview()) {
-            $unitField?->updateOnPreview();
-        } else {
-        }
-
-        return $unitField;
+    protected function isUnitField(): bool
+    {
+        return ! \is_null($this->unitField);
     }
 }

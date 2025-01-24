@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace ForestLynx\MoonShine\Fields;
 
 use Closure;
+use MoonShine\UI\Fields\Enum;
 use NumberFormatter;
 use ForestLynx\MoonShine\Trait\WithUnit;
 use ForestLynx\MoonShine\Trait\WithNumberFormatter;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Database\Eloquent\Model;
 use MoonShine\AssetManager\Css;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
+use MoonShine\Contracts\UI\FieldContract;
+use MoonShine\Laravel\MoonShineRequest;
+use MoonShine\UI\Fields\FormElement;
 use MoonShine\UI\Fields\Text;
+use MoonShine\UI\Sets\UpdateOnPreviewPopover;
 
 final class Decimal extends Text
 {
@@ -19,7 +25,7 @@ final class Decimal extends Text
     use WithUnit;
 
     protected string $view = 'moonshine-fl::fields.decimal';
-    protected string $locale;
+    protected ?string $locale = null;
     protected NumberFormatter $formatter;
     protected int $precision = 2;
     protected int $styleFormatter = NumberFormatter::DECIMAL;
@@ -47,11 +53,6 @@ final class Decimal extends Text
         return $this->locale ?? app()->getLocale();
     }
 
-    /*protected function resolveFill(array $raw = [], DataWrapperContract $casted = null, int $index = 0): static
-    {
-        return parent::resolveFill($raw, $casted, $index);
-    }
-*/
     public function precision(int $precision, ?bool $isNaturalNumber = false): static
     {
         $this->precision = $precision;
@@ -87,27 +88,6 @@ final class Decimal extends Text
         return $this->isNaturalNumber;
     }
 
-    protected function resolvePreview(): string
-    {
-        $resolvePreviewValue = '';
-        if ($this->toFormattedValue() === $this->toValue()) {
-            $resolvePreviewValue = $this->getDecimalValue() ?? '0';
-        } else {
-            $resolvePreviewValue = $this->toFormattedValue();
-        }
-
-        return $resolvePreviewValue . ($this->getUnitField() ? ' ' . $this->getUnitField()->preview() : '');
-    }
-
-    /*protected function resolveRender(): Renderable|Closure|string
-    {
-        if($this->isUpdateOnPreview()){
-            $this->unitField?->previewMode()->updateOnPreview();
-        }
-
-        return parent::resolveRender();
-    }*/
-
     protected function resolveValue(): string
     {
         $value = $this->getDecimalValue() ?? '';
@@ -120,10 +100,35 @@ final class Decimal extends Text
         return $value;
     }
 
+    protected function resolveRender(): Renderable|Closure|string
+    {
+        if ($this->isUnitField()) {
+            if (is_null($this->getFormattedValueCallback())) {
+                $this->setFormattedValueCallback(
+                    fn ($m, $i, self $f): string => \sprintf(
+                        "%s %s",
+                        $f->getDecimalValue() ?? '0',
+                        $f->getUnitField()?->preview() ?? ''
+                    )
+                );
+            }
+
+            if (
+                $this->isUpdateOnPreview() && $this->isPreviewMode()
+                && !($this->updateOnPreviewPopover && $this->updateOnPreviewParentComponent && $this->isPreviewMode())
+            ) {
+                $this->updateInPopover(
+                    (string) app(MoonShineRequest::class)?->getResource()?->getListComponentName()
+                );
+            }
+        }
+        return parent::resolveRender();
+    }
+
     protected function getDecimalValue(): ?string
     {
-        //TODO обработка строкового значения не относящегося к установленной локали
-        // и не являющейся фактически числом или числом с плавающей точкой.
+    //TODO обработка строкового значения не относящегося к установленной локали
+    // и не являющейся фактически числом или числом с плавающей точкой.
         if (!isset($this->formatter)) {
             $this->setFormatter();
         }
@@ -160,8 +165,9 @@ final class Decimal extends Text
 
         return function ($item) {
             $value = $this->getRequestValue();
-            $unitField = $this->getUnitField();
-            if($unitField){
+            if ($this->isUnitField()) {
+                /** @var FieldContract $unitField */
+                $unitField = $this->getUnitField();
                 $item->{$unitField->getColumn()} = $unitField->getRequestValue();
             }
             if (!$value) {
@@ -169,6 +175,10 @@ final class Decimal extends Text
             }
 
             $number = $this->formatter->parse((string) $value);
+
+            if (!$number) {
+                return $item;
+            }
 
             if ($this->isNaturalNumber()) {
                 $number = (int) ($number * pow(10, $this->getPrecision()));
@@ -183,8 +193,8 @@ final class Decimal extends Text
     protected function viewData(): array
     {
         return [
-            ...parent::viewData(),
-            'unitField' => $this->getUnitField(),
+        ...parent::viewData(),
+        'unitField' => $this->getUnitField(),
         ];
     }
 
