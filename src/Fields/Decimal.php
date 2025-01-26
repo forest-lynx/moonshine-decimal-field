@@ -5,19 +5,14 @@ declare(strict_types=1);
 namespace ForestLynx\MoonShine\Fields;
 
 use Closure;
-use MoonShine\UI\Fields\Enum;
 use NumberFormatter;
-use ForestLynx\MoonShine\Trait\WithUnit;
-use ForestLynx\MoonShine\Trait\WithNumberFormatter;
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Database\Eloquent\Model;
-use MoonShine\AssetManager\Css;
-use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
-use MoonShine\Contracts\UI\FieldContract;
-use MoonShine\Laravel\MoonShineRequest;
-use MoonShine\UI\Fields\FormElement;
 use MoonShine\UI\Fields\Text;
-use MoonShine\UI\Sets\UpdateOnPreviewPopover;
+use MoonShine\AssetManager\Css;
+use MoonShine\Laravel\MoonShineRequest;
+use ForestLynx\MoonShine\Trait\WithUnit;
+use MoonShine\Contracts\UI\FieldContract;
+use Illuminate\Contracts\Support\Renderable;
+use ForestLynx\MoonShine\Trait\WithNumberFormatter;
 
 final class Decimal extends Text
 {
@@ -115,7 +110,7 @@ final class Decimal extends Text
 
             if (
                 $this->isUpdateOnPreview() && $this->isPreviewMode()
-                && !($this->updateOnPreviewPopover && $this->updateOnPreviewParentComponent && $this->isPreviewMode())
+                && !($this->updateOnPreviewPopover && $this->updateOnPreviewParentComponent)
             ) {
                 $this->updateInPopover(
                     (string) app(MoonShineRequest::class)?->getResource()?->getListComponentName()
