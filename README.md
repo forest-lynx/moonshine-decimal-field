@@ -12,6 +12,11 @@ Documentation in [English](./doc/README-EN.md)
 Поле для работы с десятичными числами в административной панели [MoonShine](https://moonshine-laravel.com/). Наследуется от поля Text.
 При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
+## Совместимость
+|Версия пакета | Версия админ-панели MoonShine |
+|:---:|:---:|
+| ^1.x | ^2.18.0 |
+| ^2.x | ^3.x |
 ## Содержание
 * [Установка](#установка)
 * [Использование](#использование)
@@ -21,7 +26,7 @@ Documentation in [English](./doc/README-EN.md)
 ## Установка
 Команда для установки:
 ```bash
-composer require forest-lynx/moonshine-decimal-field
+composer require forest-lynx/moonshine-decimal-field:^1.0
 ```
 ## Использование
 ```php

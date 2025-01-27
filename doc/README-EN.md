@@ -10,6 +10,11 @@
 Decimal number field in the [MoonShine](https://moonshine-laravel.com/) admin panel. Inherited from the Text field.
 When editing, a mask is applied to the field [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
+## Compatibility
+|Package version | MoonShine Admin Panel Version |
+|:---:|:---:|
+| ^1. x | ^2.18.0 |
+| ^2.x | ^3.x |
 ## Contents
 * [Installation](#installation)
 * [Usage](#usage)
@@ -18,8 +23,8 @@ When editing, a mask is applied to the field [@money Alpine.js](https://alpinejs
 
 ## Installation
 Command to install:
-```bash.
-composer require forest-lynx/moonshine-decimal-field
+```bash
+composer require forest-lynx/moonshine-decimal-field:^1.0
 ```
 ## Usage
 ```php
