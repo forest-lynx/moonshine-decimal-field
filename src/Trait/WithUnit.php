@@ -32,7 +32,7 @@ trait WithUnit
         return $this;
     }
 
-    public function unitDefaultValue(mixed $default): static
+    public function unitDefault(mixed $default): static
     {
         $this->unitField?->default($default);
 

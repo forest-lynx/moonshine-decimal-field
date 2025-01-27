@@ -5,13 +5,18 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)\
 [![Laravel](https://img.shields.io/badge/Laravel-11+-FF2D20?style=for-the-badge&logo=laravel)](Laravel) 
 [![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)](PHP) 
-[![PHP](https://img.shields.io/badge/Moonshine-2.0+-1B253B?style=for-the-badge)](https://github.com/moonshine-software/moonshine) 
+[![PHP](https://img.shields.io/badge/Moonshine-3.0+-1B253B?style=for-the-badge)](https://github.com/moonshine-software/moonshine) 
 
 Documentation in [English](./doc/README-EN.md)
 
 Поле для работы с десятичными числами в административной панели [MoonShine](https://moonshine-laravel.com/). Наследуется от поля Text.
 При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
+## Совместимость
+|Версия пакета | Версия админ-панели MoonShine |
+|:---:|:---:|
+| ^1.x | ^2.18.0 |
+| ^2.x | ^3.x |
 ## Содержание
 * [Установка](#установка)
 * [Использование](#использование)
@@ -78,29 +83,28 @@ Decimal::make('Sum', 'sum')
 Для указания поля, где хранятся единицы измерения:
 
 ##### Методы
-`unit(string $unit, string|array $data)`:
-- `$unit` - название колонки в базе данных.
-- `$data` - массив с данными, или название класса перечисления с данными о единицах измерения.
+`unit(?string $column = null, \Closure|array|Options|string $data, ?Closure $formatted = null)`:
+- `$column` - связь столбца в базе и атрибута `name` у поля ввода.
+- `$data` - Для создания поля типа [Enum](https://moonshine-laravel.com/ru/docs/3.x/fields/enum) нужно передать название класса (например: `App\Enums\Unit::class`). Для формирования поля типа [Select](https://moonshine-laravel.com/ru/docs/3.x/fields/select) нужно передать опции, как через метод `options()` поля Select.
+- `$formatted` - замыкание для форматирования значения поля в режиме preview.
 
-`unitDefault(mixed $default)`:
-- `$default` - значение по умолчанию для поля.
+`unitDefault(mixed $default)` идентичен методу [default()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#default),
+`unitNullable()` идентичен методу [nullable()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#nullable),
+`unitSearchable()` идентичен методу [searchable()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#search),
 
 Примеры использования:
 ```php
 <?php
 use ForestLynx\MoonShine\Fields\Decimal;
+use App\Enums\Unit;
 //...
-Decimal::make('Price', 'price')
-    ->unit('unit', ['килограмм.', 'литр'])
-    ->unitDefault(0);
-//or
 Decimal::make('Price', 'price')
     ->unit('unit', [0 => 'килограмм.', 1 => 'литр'])
     ->unitDefault(1);
 //or
 Decimal::make('Price', 'price')
-    ->unit('unit', UnitEnum::class)
-    ->unitDefault(UnitEnum::KILOGRAM);
+    ->unit('unit', Unit::class)
+    ->unitDefault(Unit::KILOGRAM);
 //...
 ```
 Как это выглядит в административной панели:
