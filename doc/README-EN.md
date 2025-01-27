@@ -92,7 +92,9 @@ To specify the field where the units of measurement are stored:
 - `$formatted` is a closure for formatting the field value in preview mode.
 
 `unitDefault(mixed $default)` is identical to the [default()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#default) method,
+
 `unitNullable()` is identical to the [nullable()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#nullable) method,
+
 `unitSearchable()` is identical to the [searchable()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#search) method,
 
 Usage examples:

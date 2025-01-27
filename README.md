@@ -95,7 +95,9 @@ Decimal::make('Sum', 'sum')
 - `$formatted` - замыкание для форматирования значения поля в режиме preview.
 
 `unitDefault(mixed $default)` идентичен методу [default()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#default),
+
 `unitNullable()` идентичен методу [nullable()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#nullable),
+
 `unitSearchable()` идентичен методу [searchable()](https://moonshine-laravel.com/ru/docs/3.x/fields/select#search),
 
 Примеры использования:
