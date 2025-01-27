@@ -10,6 +10,11 @@
 Decimal number field in the [MoonShine](https://moonshine-laravel.com/) admin panel. Inherited from the Text field.
 When editing, a mask is applied to the field [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
+>[!NOTE]
+>Field editing in preview mode is performed via a pop-up window, as provided by the [`updateInPopover()`](https://moonshine-laravel.com/ru/docs/3.x/fields/basic-methods#update-in-popover) fields method in the MoonShine admin panel.
+
+>[!NOTE]
+>Validation for [units of measurement](#units-of-measurement) is not supported.
 ## Compatibility
 |Package version | MoonShine Admin Panel Version |
 |:---:|:---:|

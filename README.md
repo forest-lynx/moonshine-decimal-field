@@ -12,6 +12,12 @@ Documentation in [English](./doc/README-EN.md)
 Поле для работы с десятичными числами в административной панели [MoonShine](https://moonshine-laravel.com/). Наследуется от поля Text.
 При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
 
+>[!NOTE]
+> Редактирование поля в режиме предварительного просмотра осуществляется через всплывающее окно, как это предусмотрено методом полей [`updateInPopover()`](https://moonshine-laravel.com/ru/docs/3.x/fields/basic-methods#update-in-popover) админ панели MoonShine.
+
+>[!NOTE]
+> Валидация для [единиц измерения](#единицы-измерения) не поддерживается.
+
 ## Совместимость
 |Версия пакета | Версия админ-панели MoonShine |
 |:---:|:---:|
