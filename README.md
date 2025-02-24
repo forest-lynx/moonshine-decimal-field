@@ -1,3 +1,8 @@
+ <!--
+title: MoonShine Decimal Field
+versions: 2,3
+image: https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/screenshots/preview.png
+-->
 # Поле Decimal для Moonshine
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/forest-lynx/moonshine-decimal-field)](https://github.com/forest-lynx/moonshine-decimal-field)
