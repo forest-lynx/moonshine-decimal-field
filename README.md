@@ -7,7 +7,7 @@
 [![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)](PHP) 
 [![PHP](https://img.shields.io/badge/Moonshine-3.0+-1B253B?style=for-the-badge)](https://github.com/moonshine-software/moonshine) 
 
-Documentation in [English](./doc/README-EN.md)
+Documentation in [English](https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/doc/README-EN.md)
 
 Поле для работы с десятичными числами в административной панели [MoonShine](https://moonshine-laravel.com/). Наследуется от поля Text.
 При редактировании к полю применяется маска [@money Alpine.js](https://alpinejs.dev/plugins/mask#money-inputs)
@@ -118,7 +118,7 @@ Decimal::make('Price', 'price')
 Как это выглядит в административной панели:
 |Просмотр|Редактирование|
 |:--:|:--:|
-|![preview](./screenshots/priview.png)|![edit](./screenshots/edit.png)|
+|![preview](https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/screenshots/priview.png)|![edit](https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/screenshots/edit.png)|
 
 ## Лицензия
 [Лицензия MIT](LICENSE).
