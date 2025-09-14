@@ -55,7 +55,9 @@ trait WithUnit
 
     protected function getUnitField(): null|Select|Enum
     {
-        return (clone $this->unitField)?->fillData($this->getData());
+        return $this->isUnitField()
+            ? (clone $this->unitField)?->fillData($this->getData())
+            : null;
     }
 
     protected function isUnitField(): bool
