@@ -11,7 +11,7 @@ trait WithNumberFormatter
     protected function setFormatter(): void
     {
         $this->formatter = new NumberFormatter($this->getLocale(), $this->styleFormatter);
-        $this->getFractionDigits();
+        $this->setFractionDigits();
     }
 
     protected function setFractionDigits(): void

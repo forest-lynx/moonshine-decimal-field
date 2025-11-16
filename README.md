@@ -1,6 +1,6 @@
  <!--
 title: MoonShine Decimal Field
-versions: 2,3
+versions: 2,3,4
 image: https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/screenshots/priview.png
 -->
 # Поле Decimal для Moonshine
@@ -10,7 +10,7 @@ image: https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/screensho
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)\
 [![Laravel](https://img.shields.io/badge/Laravel-11+-FF2D20?style=for-the-badge&logo=laravel)](Laravel) 
 [![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)](PHP) 
-[![PHP](https://img.shields.io/badge/Moonshine-3.0+-1B253B?style=for-the-badge)](https://github.com/moonshine-software/moonshine) 
+[![PHP](https://img.shields.io/badge/Moonshine-4.0+-1B253B?style=for-the-badge)](https://github.com/moonshine-software/moonshine) 
 
 Documentation in [English](https://github.com/forest-lynx/moonshine-decimal-field/blob/2.x/doc/README-EN.md)
 
@@ -28,6 +28,7 @@ Documentation in [English](https://github.com/forest-lynx/moonshine-decimal-fiel
 |:---:|:---:|
 | ^1.x | ^2.18.0 |
 | ^2.x | ^3.x |
+| ^3.x | ^4.x |
 ## Содержание
 * [Установка](#установка)
 * [Использование](#использование)
@@ -94,8 +95,8 @@ Decimal::make('Sum', 'sum')
 Для указания поля, где хранятся единицы измерения:
 
 ##### Методы
-`unit(?string $column = null, \Closure|array|Options|string $data, ?Closure $formatted = null)`:
-- `$column` - связь столбца в базе и атрибута `name` у поля ввода.
+`unit(string $column, \Closure|array|Options|string $data, ?Closure $formatted = null)`:
+- `$column` - связь с полем в базе данных.
 - `$data` - Для создания поля типа [Enum](https://moonshine-laravel.com/ru/docs/3.x/fields/enum) нужно передать название класса (например: `App\Enums\Unit::class`). Для формирования поля типа [Select](https://moonshine-laravel.com/ru/docs/3.x/fields/select) нужно передать опции, как через метод `options()` поля Select.
 - `$formatted` - замыкание для форматирования значения поля в режиме preview.
 

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace ForestLynx\MoonShine\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use MoonShine\AssetManager\AssetElements;
-use MoonShine\AssetManager\AssetManager;
 
 final class DecimalFieldServiceProvider extends ServiceProvider
 {

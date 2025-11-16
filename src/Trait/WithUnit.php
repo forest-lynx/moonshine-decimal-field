@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ForestLynx\MoonShine\Trait;
 
 use Closure;
+use BackedEnum;
 use ReflectionClass;
 use MoonShine\UI\Fields\Enum;
 use MoonShine\UI\Fields\Select;
@@ -14,13 +15,14 @@ trait WithUnit
 {
     protected null|Select|Enum $unitField = null;
 
-    public function unit(?string $column, Closure|array|Options|string $data, ?Closure $formatted = null): static
+    public function unit(string $column, Closure|array|Options|string $data, ?Closure $formatted = null): static
     {
         if (
             is_string($data)
             && class_exists($data)
             && (new ReflectionClass($data))->isEnum()
         ) {
+            /** @var class-string<BackedEnum> $data */
             $this->unitField = Enum::make(column: $column, formatted: $formatted)->attach($data);
         } elseif (!is_string($data)) {
             $this->unitField = Select::make(column: $column, formatted: $formatted)
@@ -55,9 +57,14 @@ trait WithUnit
 
     protected function getUnitField(): null|Select|Enum
     {
-        return $this->isUnitField()
-            ? (clone $this->unitField)?->fillData($this->getData())
-            : null;
+        if ($this->isUnitField()) {
+            /** @var Select|Enum $temp */
+            $temp = $this->unitField;
+            $unitField = clone $temp;
+            return $unitField->fillData($this->getData());
+        }
+
+        return null;
     }
 
     protected function isUnitField(): bool

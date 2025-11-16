@@ -10,7 +10,6 @@ use MoonShine\UI\Fields\Text;
 use MoonShine\AssetManager\Css;
 use MoonShine\Laravel\MoonShineRequest;
 use ForestLynx\MoonShine\Trait\WithUnit;
-use MoonShine\Contracts\UI\FieldContract;
 use Illuminate\Contracts\Support\Renderable;
 use ForestLynx\MoonShine\Trait\WithNumberFormatter;
 
@@ -83,7 +82,7 @@ final class Decimal extends Text
         return $this->isNaturalNumber;
     }
 
-    protected function resolveValue(): string
+    protected function resolveValue(): mixed
     {
         $value = $this->getDecimalValue() ?? '';
 
@@ -113,41 +112,39 @@ final class Decimal extends Text
                 && !($this->updateOnPreviewPopover && $this->updateOnPreviewParentComponent)
             ) {
                 $this->updateInPopover(
-                    (string) app(MoonShineRequest::class)?->getResource()?->getListComponentName()
+                    (string) \moonshineRequest()->getResource()?->getListComponentName()
                 );
             }
         }
         return parent::resolveRender();
     }
 
-    protected function getDecimalValue(): ?string
+    protected function getDecimalValue(): string
     {
-    //TODO обработка строкового значения не относящегося к установленной локали
-    // и не являющейся фактически числом или числом с плавающей точкой.
+        //TODO обработка строкового значения не относящегося к установленной локали
+        // и не являющейся фактически числом или числом с плавающей точкой.
         if (!isset($this->formatter)) {
             $this->setFormatter();
         }
 
         $this->checkAndSetFractionDigits();
 
-        if (is_string($this->toValue())) {
-            $value = $this->formatter->parse($this->toValue());
-            if (!$value) {
-                $value = floatval($this->toValue());
-            }
-        } else {
-            $value = $this->toValue() ?? 0;
+        $rawValue = $this->toValue();
+        $value = 0.0;
+
+        if (is_string($rawValue)) {
+            $parsed = $this->formatter->parse($rawValue);
+            $value = $parsed === false ? floatval($rawValue) : (float) $parsed;
+        } elseif (is_numeric($rawValue)) {
+            $value = (float) $rawValue;
         }
 
         if ($this->isNaturalNumber()) {
-            $value = $value / pow(10, $this->getPrecision());
+            $value /= 10 ** $this->getPrecision();
         }
 
-        if ($value) {
-            $value = $this->formatter->format($value);
-            return (string) $value;
-        }
-        return null;
+        $value = $this->formatter->format($value);
+        return (string) $value;
     }
 
     protected function resolveOnApply(): ?Closure
@@ -158,12 +155,16 @@ final class Decimal extends Text
 
         $this->checkAndSetFractionDigits();
 
-        return function ($item) {
+        return function (mixed $item) {
             $value = $this->getRequestValue();
             if ($this->isUnitField()) {
-                /** @var FieldContract $unitField */
                 $unitField = $this->getUnitField();
-                $item->{$unitField->getColumn()} = $unitField->getRequestValue();
+                if ($unitField) {
+                    $item->{$unitField->getColumn()} = $unitField->getRequestValue();
+                }
+            }
+            if (!is_scalar($value)) {
+                return $item;
             }
             if (!$value) {
                 return $item;
@@ -175,8 +176,9 @@ final class Decimal extends Text
                 return $item;
             }
 
+            /** @var float|int $number */
             if ($this->isNaturalNumber()) {
-                $number = (int) ($number * pow(10, $this->getPrecision()));
+                $number = (int) ($number * 10 ** $this->getPrecision());
             }
 
             $item->{$this->getColumn()} = $number;
@@ -196,7 +198,8 @@ final class Decimal extends Text
     public function getAssets(): array
     {
         return [
-            Css::make('vendor/moonshine-decimal-field/css/decimal-field.css')
+            ...parent::getAssets(),
+            Css::make('vendor/moonshine-decimal-field/css/decimal-field.css'),
         ];
     }
 }

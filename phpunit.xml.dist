@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         colors="true"
+         processIsolation="false"
+         stopOnError="true"
+         stopOnFailure="true"
+         cacheDirectory=".phpunit.cache"
+         backupStaticProperties="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+>
+    <testsuites>
+        <testsuite name="Suite">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="APP_LOCALE" value="en"/>
+        <ini name="date.timezone" value="UTC"/>
+        <ini name="intl.default_locale" value="en_US"/>
+        <ini name="memory_limit" value="2048M"/>
+    </php>
+    <source>
+        <include>
+        <directory suffix=".php">src</directory>
+        </include>
+    </source>
+</phpunit>
